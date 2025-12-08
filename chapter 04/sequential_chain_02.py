@@ -3,15 +3,15 @@ from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-from langchain_openai import ChatOpenAI
+from langchain_mistralai import ChatMistralAI
 
 # .env 파일에서 환경 변수 로드
 load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 
-# ChatOpenAI 모델 초기화
+# ChatMistralAI 모델 초기화
 # Temperature 설정 (모델의 응답 다양성 조절)
-openai_llm = ChatOpenAI(model="gpt-3.5-turbo", api_key=OPENAI_API_KEY, temperature=0.7)
+openai_llm = ChatMistralAI(model="mistral-large-latest", api_key=MISTRAL_API_KEY, temperature=0.7)
 
 # --- 프롬프트 템플릿 정의 ---
 

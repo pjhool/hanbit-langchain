@@ -1,14 +1,15 @@
 from langchain.chains.llm import LLMChain
 from langchain.chains.sequential import SequentialChain
-from langchain_openai import ChatOpenAI
+from langchain_mistralai import ChatMistralAI
 from langchain_core.prompts import PromptTemplate
 import os
 from dotenv import load_dotenv
 load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 
 # Temperature 설정
-openai = ChatOpenAI(model="gpt-3.5-turbo", api_key=OPENAI_API_KEY, temperature=0.7)
+# Mistral AI 모델 사용
+openai = ChatMistralAI(model="mistral-large-latest", api_key=MISTRAL_API_KEY, temperature=0.7)
 
 # 프롬프트 템플릿 설정
 prompt1 = PromptTemplate.from_template(

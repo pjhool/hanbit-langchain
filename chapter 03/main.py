@@ -1,12 +1,16 @@
-from langchain_openai import ChatOpenAI
+from langchain_mistralai import ChatMistralAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+import os 
 from dotenv import load_dotenv
 load_dotenv()
 
 
 #ChatOpenAI 초기화
-llm = ChatOpenAI()
+llm = ChatMistralAI(
+   model="mistral-large-latest",
+   api_key=os.getenv("MISTRAL_API_KEY")
+)
 
 
 #프롬프트 템플릿 생성
