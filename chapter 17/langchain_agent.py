@@ -2,7 +2,7 @@
 from langchain.agents import AgentExecutor
 
 # 벡터 DB를 agent에게 전달하기 위한 tool생성
-from langchain.agents import create_openai_tools_agent
+from langchain.agents import create_tool_calling_agent
 
 # langchainhub 에서 제공하는 prompt 사용
 from langchain import hub
@@ -14,7 +14,7 @@ from langchain_community.tools import ArxivQueryRun
 # 벡터 DB구축 및 검색 도구
 from langchain.tools.retriever import create_retriever_tool
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
+from langchain_mistralai import MistralAIEmbeddings
 
 # langchain 공식 문서 검색을 위한 검색기 역할을 하는 벡터 DB 생성
 from langchain_community.vectorstores import FAISS
@@ -25,19 +25,19 @@ from langchain_community.utilities import WikipediaAPIWrapper
 from langchain_community.tools import WikipediaQueryRun
 
 #openAI LLM 설정
-from langchain_openai import ChatOpenAI
+from langchain_mistralai import ChatMistralAI
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
 # 일관된 값을 위하여 Temperature 0.1로 설정 model은 gpt-4o로도 설정 할 수 있습니다.
-openai = ChatOpenAI(
-    model="gpt-4o-mini", api_key=os.getenv("OPENAI_API_KEY"), temperature=0.1)
+llm = ChatMistralAI(
+    model="mistral-large-latest", api_key=os.getenv("MISTRAL_API_KEY"), temperature=0.1)
 
 
 # agent 시물레이션을 위한 prompt 참조
 # hub에서 가져온 prompt를 agent에게 전달하기 위한 prompt 생성
-prompt = hub.pull("hwchase17/openai-functions-agent")
+prompt = hub.pull("hwchase17/openai-tools-agent")
 
 
 # Wikipedia API 설정 : top_k_results = 결과 수, doc_content_chars_max = 문서 길이 제한
@@ -57,7 +57,7 @@ documents = RecursiveCharacterTextSplitter(
     chunk_size=1000, chunk_overlap=200).split_documents(docs)
 
 # 문서를 임베딩하고 FAISS 벡터 DB로 저장
-vectordb = FAISS.from_documents(documents, OpenAIEmbeddings())
+vectordb = FAISS.from_documents(documents, MistralAIEmbeddings())
 retriever = vectordb.as_retriever() # 벡터 DB를 검색기로 변환
 
 #검색기 객체 출력 확인
@@ -84,7 +84,7 @@ print(arxiv.name)
 tools = [wiki, retriever_tool, arxiv]
 
 # agent llm 모델을 openai로 정의하고 tools ,prompt를 입력하여 agent를 완성한다.
-agent = create_openai_tools_agent(llm=openai, tools=tools, prompt=prompt)
+agent = create_tool_calling_agent(llm=llm, tools=tools, prompt=prompt)
 
 
 # agent Execute 정의 부분 verbose=True로 설정하면 agent 실행과정을 출력합니다.
